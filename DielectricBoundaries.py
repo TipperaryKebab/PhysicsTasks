@@ -1,4 +1,5 @@
 import wx
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -65,9 +66,10 @@ class DielectricBoundaryApp(wx.Frame):
 
         ax.axhline(0, color='black', linewidth=1, linestyle='--', label="Граница раздела")
 
-        E1_angle_rad = np.radians(E1_angle_deg)
+        E1_angle_rad = np.radians(E1_angle_deg) + np.pi
         ax.arrow(
-            0, 0, 
+            -E1_magnitude * math.sin(E1_angle_rad),
+            E1_magnitude * math.cos(E1_angle_rad), 
             E1_magnitude * np.sin(E1_angle_rad), 
             -E1_magnitude * np.cos(E1_angle_rad), 
             head_width=0.2, color='blue', label=f"Поле в среде 1 (|E| = {E1_magnitude})"
@@ -76,7 +78,7 @@ class DielectricBoundaryApp(wx.Frame):
         E2_angle_rad = np.radians(E2_angle_deg)
         ax.arrow(
             0, 0, 
-            E2_magnitude * np.sin(E2_angle_rad), 
+            -E2_magnitude * np.sin(E2_angle_rad), 
             E2_magnitude * np.cos(E2_angle_rad), 
             head_width=0.2, color='green', label=f"Поле в среде 2 (|E| = {E2_magnitude:.2f})"
         )
