@@ -4,7 +4,7 @@ epsilon_0 = 8.854e-12
 
 class CapacitorCalculator(wx.Frame):
     def __init__(self, parent, title):
-        super().__init__(parent, title=title, size=(400, 300))
+        super().__init__(parent, title=title, size=(400, 400))
 
         panel = wx.Panel(self)
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -28,9 +28,15 @@ class CapacitorCalculator(wx.Frame):
         vbox.Add(hbox3, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
 
         hbox4 = wx.BoxSizer(wx.HORIZONTAL)
+        hbox4.Add(wx.StaticText(panel, label='Площадь пластин (м²):'), flag=wx.RIGHT, border=8)
+        self.area_input = wx.TextCtrl(panel)
+        hbox4.Add(self.area_input, proportion=1)
+        vbox.Add(hbox4, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+
+        hbox5 = wx.BoxSizer(wx.HORIZONTAL)
         self.connection_status = wx.CheckBox(panel, label='Подключен к источнику питания')
-        hbox4.Add(self.connection_status)
-        vbox.Add(hbox4, flag=wx.LEFT|wx.TOP, border=10)
+        hbox5.Add(self.connection_status)
+        vbox.Add(hbox5, flag=wx.LEFT|wx.TOP, border=10)
 
         self.calculate_button = wx.Button(panel, label='Рассчитать')
         self.calculate_button.Bind(wx.EVT_BUTTON, self.calculate)
@@ -46,19 +52,20 @@ class CapacitorCalculator(wx.Frame):
             voltage = float(self.voltage_input.GetValue())
             distance = float(self.distance_input.GetValue())
             dielectric = float(self.dielectric_input.GetValue())
+            area = float(self.area_input.GetValue())
             connected = self.connection_status.GetValue()
 
-
-            capacitance = epsilon_0 * dielectric / distance
+            capacitance = epsilon_0 * dielectric * area / distance
 
             if connected:
                 charge = capacitance * voltage
                 field_strength = voltage / distance
             else:
                 charge = capacitance * voltage
-                field_strength = charge / (epsilon_0 * dielectric * distance)
+                field_strength = charge / (epsilon_0 * dielectric * area)
 
             self.result_text.SetLabelText(
+                f'Ёмкость: {capacitance:.2e} Ф\n'
                 f'Напряженность поля: {field_strength:.2e} В/м\n'
                 f'Заряд на пластинах: {charge:.2e} Кл'
             )
